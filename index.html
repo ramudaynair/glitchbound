@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GLITCHBOUND — 60 Seconds to Save the Network</title>
+<link rel="stylesheet" href="style.css?v=4">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%232e9c95%27/%3E%3Crect x=%277%27 y=%279%27 width=%2718%27 height=%2714%27 rx=%274%27 fill=%27%231c2833%27/%3E%3Ccircle cx=%2712%27 cy=%2716%27 r=%272.5%27 fill=%27%235bc0eb%27/%3E%3Ccircle cx=%2720%27 cy=%2716%27 r=%272.5%27 fill=%27%235bc0eb%27/%3E%3C/svg%3E">
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" width="1280" height="720"></canvas>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-panel" id="hud-left">
+      <canvas id="portrait" width="72" height="72"></canvas>
+      <div class="hud-left-text">
+        <div class="hud-name">NETWORK KEEPER</div>
+        <div class="hud-sub">LV. 01</div>
+        <div class="hud-label">NETWORK</div>
+        <div class="bar"><div class="bar-fill net" id="net-bar"></div></div>
+      </div>
+    </div>
+    <div class="hud-panel" id="hud-center">
+      <div class="hud-title">GLITCHBOUND</div>
+      <div class="hud-label">TIME</div>
+      <div class="hud-time" id="hud-time">01:00</div>
+    </div>
+    <div class="hud-panel" id="hud-right">
+      <div class="hud-label">OBJECTIVE</div>
+      <div class="hud-obj">SAVE THE NETWORK</div>
+      <div class="hud-row"><span class="hud-label">SYSTEMS</span><span id="hud-systems">0/0</span></div>
+      <div class="hud-row"><span class="hud-label">CORE</span><span id="hud-core" class="core-stable">STABLE</span></div>
+      <div class="bar small"><div class="bar-fill core" id="core-bar"></div></div>
+    </div>
+    <div id="alert" class="hidden"></div>
+    <div id="action-bar" class="hidden"><span class="key">E</span><span id="action-label">INTERACT</span></div>
+    <div id="panel" class="hidden"></div>
+    <div id="hint">WASD / ARROWS move · E interact · M mute</div>
+  </div>
+
+  <!-- Title -->
+  <div id="title" class="screen">
+    <canvas id="title-bg" width="1280" height="720"></canvas>
+    <canvas id="title-robot" width="300" height="420"></canvas>
+    <div class="title-block">
+      <h1>GLITCHBOUND</h1>
+      <h2>60 SECONDS TO SAVE THE NETWORK</h2>
+      <p class="tagline">“The network is breaking apart.”</p>
+      <button id="start-btn" class="big-btn">[ START ]</button>
+      <p class="controls">WASD / Arrow keys to move · E to interact</p>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="screen hidden">
+    <div class="result-card">
+      <h1 id="result-title">NETWORK SAVED</h1>
+      <p id="result-sub"></p>
+      <div class="result-stats">
+        <div><span class="hud-label" id="result-sys-label">SYSTEMS REPAIRED</span><b id="result-sys">0/0</b></div>
+        <div><span class="hud-label" id="result-time-label">TIME REMAINING</span><b id="result-time">0.0</b></div>
+      </div>
+      <button id="again-btn" class="big-btn">[ PLAY AGAIN ]</button>
+    </div>
+  </div>
+  <div id="glitch-overlay"></div>
+</div>
+
+<script src="js/audio.js?v=4"></script>
+<script src="js/robot.js?v=4"></script>
+<script src="js/world.js?v=4"></script>
+<script src="js/minigames.js?v=4"></script>
+<script src="js/game.js?v=4"></script>
+</body>
+</html>
