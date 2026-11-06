@@ -358,7 +358,7 @@
       World.drawAmbient(bctx, globalT);
       bctx.restore();
       tctx.clearRect(0, 0, titleCanvas.width, titleCanvas.height);
-      Robot.draw(tctx, { x: 150, y: 360, scale: 2.6, facing: 1, expr: Math.sin(globalT * 0.7) > 0.3 ? 'happy' : 'idle', t: globalT, blink: Math.sin(globalT * 3) > 0.97 ? 1 : 0 });
+      Robot.draw(tctx, { x: 150, y: 400, scale: 2.6, facing: 1, expr: Math.sin(globalT * 0.7) > 0.3 ? 'happy' : 'idle', t: globalT, blink: Math.sin(globalT * 3) > 0.97 ? 1 : 0 });
       return;
     }
     const st = { coreStability: G.coreStability, coreSaved: G.coreSaved };
