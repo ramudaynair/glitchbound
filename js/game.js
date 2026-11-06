@@ -96,8 +96,9 @@
   }
   function removeInter(ev) { G.interactables = G.interactables.filter(i => i !== ev.inter); }
   function succeed(ev, extra) {
+    if (state !== 'play' || ev.state !== 'active') return;
     ev.state = 'solved'; G.solved++;
-    closeMinigame();
+    if (G.minigameEvent === ev) { G.minigame = null; G.minigameEvent = null; }
     removeInter(ev);
     setExpr('happy', 1.6); say(pick(LINES.fixed));
     switch (ev.type) {
@@ -117,8 +118,9 @@
     Audio2.sfx.success(); checkCorePhase();
   }
   function fail(ev) {
+    if (state !== 'play' || ev.state !== 'active') return;
     ev.state = 'failed'; G.failed++; G.coreStability -= 15; G.shake = 0.4;
-    closeMinigame();
+    if (G.minigameEvent === ev) closeMinigame();
     removeInter(ev); setExpr('concerned', 2); say(pick(LINES.worse)); Audio2.sfx.alarm();
     switch (ev.type) {
       case 'server': NODES.servers.s3 = 'offline'; NODES.servers.status = 'offline'; showAlert('SERVER VILLAGE', 'SERVER-03 LOST — VILLAGE DARK', 'danger'); break;
@@ -180,12 +182,14 @@
 
   // ---------- end states ----------
   function win() {
+    if (state !== 'play') return;
     G.coreSaved = true; G.minigame = null; state = 'ending'; G.result = 'win'; G.endT = 2.4;
     for (const n of Object.values(NODES)) { n.status = 'ok'; n.s3 = null; } for (const e of EDGES) e.broken = false; for (const g of G.glitches) g.friendly = true;
     G.interactables = []; setExpr('celebrating', 99); say('Network saved!', 3); showAlert('CORE SERVER', 'NETWORK RESTORED', 'good', 3);
     addParticles(NODES.core.x, NODES.core.y - 120, P.yellow, 40); Audio2.sfx.victory(); Audio2.stopMusic();
   }
   function lose(reason) {
+    if (state !== 'play') return;
     closeMinigame(); state = 'ending'; G.result = 'lose'; G.endT = 2.4; G.loseReason = reason;
     G.interactables = []; setExpr('panicking', 99); say('No... no no no!', 3); showAlert('CORE SERVER', 'CORE FAILURE', 'danger', 3);
     $('glitch-overlay').classList.add('on'); Audio2.sfx.collapse(); Audio2.stopMusic(); G.shake = 1.2;
@@ -227,13 +231,15 @@
   $('again-btn').addEventListener('click', startGame);
 
   function nearestInteractable() {
-    let best = null, bd = 80;
+    let best = null, bd = 80, talkBest = null, talkBd = 80;
     for (const i of G.interactables) {
       if (i.enabled && !i.enabled()) continue;
       const d = Math.hypot(i.x - G.player.x, (i.y - G.player.y) * 1.3);
-      if (d < bd) { bd = d; best = i; }
+      if (i.id === 'npc' || i.id === 'bot') {
+        if (d < talkBd) { talkBd = d; talkBest = i; }
+      } else if (d < bd) { bd = d; best = i; }
     }
-    return best;
+    return best || talkBest;
   }
   function interact() { const i = nearestInteractable(); if (i) { G.player.facing = i.x >= G.player.x ? 1 : -1; i.act(); } }
 

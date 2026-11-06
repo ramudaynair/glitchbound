@@ -5,7 +5,8 @@ const Minigames = (() => {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const finish = (cb, delay = 900) => setTimeout(() => { hide(); cb(); }, delay);
+  let panelGen = 0;
+  const finish = (cb, delay = 900) => { const g = panelGen; setTimeout(() => { if (panelGen === g) hide(); cb(); }, delay); };
 
   // ---- illustrated icons (inline SVG) ----
   const I = {
@@ -23,12 +24,13 @@ const Minigames = (() => {
   let keyList = () => panel().querySelectorAll('.choice');
   let clickHandler = null;
   function show(title, tag, body, tagCls = '', icon = 'server') {
+    panelGen++;
     const p = panel(); p.classList.remove('hidden'); p.classList.remove('shake');
     p.innerHTML = `<div class="panel-head"><div class="panel-icon">${I[icon] || ''}</div><div class="panel-title">${esc(title)}</div><span class="panel-tag ${tagCls}">${esc(tag)}</span></div><div class="panel-body">${body}</div><div class="panel-msg" id="panel-msg"></div><div class="panel-foot"><span class="rivet"></span>ESC to step back<span class="rivet"></span></div>`;
     keyList = () => p.querySelectorAll('.choice');
     return p;
   }
-  function hide() { const p = panel(); p.classList.add('hidden'); p.innerHTML = ''; p.onclick = null; clickHandler = null; }
+  function hide() { panelGen++; const p = panel(); p.classList.add('hidden'); p.innerHTML = ''; p.onclick = null; clickHandler = null; }
   function msg(text, cls = '') { const m = document.getElementById('panel-msg'); if (m) { m.textContent = text; m.className = 'panel-msg ' + cls; } }
   function shake() { const p = panel(); p.classList.remove('shake'); void p.offsetWidth; p.classList.add('shake'); }
   function bind(handler) { clickHandler = handler; panel().onclick = e => { const el = e.target.closest('[data-act]'); if (el && clickHandler) clickHandler(el); }; }
