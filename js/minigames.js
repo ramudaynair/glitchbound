@@ -322,7 +322,7 @@ const Minigames = (() => {
     const TOTAL = 10; const sys = [{ k: 'SERVERS', need: 4, v: 0 }, { k: 'DATABASE', need: 3, v: 0 }, { k: 'CORE', need: 5, v: 0, core: true }];
     const used = () => sys.reduce((s, x) => s + x.v, 0);
     const row = (s, i) => `<div class="power-row"><div class="pname ${s.core ? 'core-name' : ''}">${s.k}<small>needs ${s.need}</small></div><div class="cells">${Array.from({ length: s.need }, (_, k) => `<div class="cell ${k < s.v ? 'on' : 'need'}"></div>`).join('')}<span class="pval ${s.v >= s.need ? 'status-ok' : 'status-bad'}">${s.v >= s.need ? 'OK' : 'LOW'}</span></div><div class="pbtns"><button class="pbtn" data-act="pw" data-i="${i}" data-d="-1">−</button><span class="pval">${s.v}</span><button class="pbtn" data-act="pw" data-i="${i}" data-d="1">+</button></div></div>`;
-    let phase = 'diag';
+    let phase = 'diag', done = false;
     const render = () => {
       if (phase === 'diag') { show('ROUTER-02', 'OVERLOAD', diag([['UPLINK', 1], ['LOAD', 0, '140% — requests dropped'], ['CAPACITY', 1, TOTAL + ' units']], 'ROUTING TABLE OVERLOADED', 'three systems are asking for 12 units. only 10 exist.') + ask(['REDISTRIBUTE CAPACITY', 'REBOOT ROUTER'], 'WHAT DO YOU DO?'), 'warn', 'router'); return; }
       show('ROUTER-02', 'REDISTRIBUTE', `<div class="power-total">CAPACITY LEFT <b>${TOTAL - used()}</b> / ${TOTAL}</div><div class="power-rows">${sys.map(row).join('')}</div><div class="choices"><button class="choice act-btn" id="act-btn" data-act="apply">[ APPLY ]<span class="keycap">E</span></button></div>`, 'warn', 'router');
@@ -330,6 +330,7 @@ const Minigames = (() => {
     };
     render();
     bind(el => {
+      if (done) return;
       if (el.dataset.act === 'choose') {
         if (el.dataset.a === 'REBOOT ROUTER') { el.classList.add('wrong'); setTimeout(() => el.classList.remove('wrong'), 400); msg('✗ it reboots into the same overload', 'bad'); Audio2.sfx.error(); shake(); return; }
         phase = 'dist'; Audio2.sfx.beep(); o.onAction && o.onAction(); render(); return;
@@ -340,7 +341,7 @@ const Minigames = (() => {
         const coreOk = alloc.CORE.ok;
         msg(coreOk ? '✓ CORE POWERED — router balanced' : '⚠ CORE UNDERPOWERED — it will destabilize', coreOk ? 'good' : 'bad');
         coreOk ? Audio2.sfx.success() : Audio2.sfx.warn();
-        finish(() => o.onSuccess(alloc), 900);
+        done = true; finish(() => o.onSuccess(alloc), 900);
       }
     });
     return handleBase();
